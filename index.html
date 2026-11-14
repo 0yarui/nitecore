@@ -243,10 +243,12 @@ a.iconbtn{text-decoration:none}
 .reveal .fx .c{animation:charin .6s cubic-bezier(.2,.7,.2,1) both;animation-delay:var(--d,0ms)}
 #home.reveal .stage{animation:rise .7s cubic-bezier(.2,.7,.2,1) .25s both}
 #home.leaving,#about.leaving{opacity:0;transform:translateY(-8px);transition:opacity .22s ease,transform .22s ease}
+/* Reduced motion: no movement at all, but the text still appears letter by letter as a soft fade. */
+@keyframes charfade{from{opacity:0}to{opacity:1}}
 @media (prefers-reduced-motion:reduce){
-  .reveal .fx .c{animation:fade .3s ease both;animation-delay:0s}
-  #home.reveal .stage{animation:fade .3s ease both}
-  #home.leaving,#about.leaving{transform:none;transition:opacity .15s ease}
+  .reveal .fx .c{animation:charfade .5s ease both;animation-delay:var(--d,0ms)}
+  #home.reveal .stage{animation:fade .5s ease .25s both}
+  #home.leaving,#about.leaving{transform:none;transition:opacity .2s ease}
 }
 </style>
 </head>
@@ -279,7 +281,7 @@ a.iconbtn{text-decoration:none}
 
     <div id="home">
     <h1>nitecore</h1>
-    <p class="sub">turn any song into nightcore.</p>
+    <p class="sub">A truly private nightcore maker</p>
 
     <div id="stage" class="stage">
     <div id="dropPanel" class="panel">
@@ -35905,10 +35907,8 @@ async function showView(v) {
   const from = about ? el.home : el.about, to = about ? el.about : el.home;
   el.aboutBtn.classList.toggle('active', about);
   if (about) el.aboutBtn.setAttribute('aria-current', 'page'); else el.aboutBtn.removeAttribute('aria-current');
-  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    from.classList.add('leaving');
-    await wait(220);
-  }
+  from.classList.add('leaving');
+  await wait(220);
   from.hidden = true; from.classList.remove('leaving');
   to.hidden = false;
   window.scrollTo(0, 0);
