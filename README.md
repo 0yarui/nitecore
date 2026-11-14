@@ -1,6 +1,6 @@
 # nitecore
 
-Turn any song into nightcore, in your browser. Nothing is uploaded.
+A truly private nightcore maker. Turn any song into nightcore in your browser.
 
 Live site: https://nitecore.pages.dev
 
