@@ -232,6 +232,8 @@ footer{padding:20px 16px 28px;text-align:center;color:var(--muted);font-size:.85
 @media (prefers-reduced-motion:reduce){
   .adv,.adv.open,.adv>.advin,.adv.open>.advin,.advbtn .ic{transition:none!important}
 }
+.made{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:6px}
+.made .heart{width:14px;height:14px;display:inline-block;color:var(--fg)}
 
 a.iconbtn{text-decoration:none}
 /* ---- letter reveal and view changes ---- */
@@ -319,8 +321,7 @@ a.iconbtn{text-decoration:none}
 
       <button class="advbtn" id="advBtn" aria-expanded="false" aria-controls="adv"><span>Advanced</span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg></button>
       <div class="adv" id="adv" inert><div class="advin"><div class="advbody">
-        <div class="ctl"><div class="row"><label for="pitch">Pitch (on top of speed)</label><output id="pitchOut" for="pitch">0.0 st</output></div><input autocomplete="off" type="range" id="pitch" min="-12" max="12" step="0.1" value="0"></div>
-        <div class="note" style="color:var(--muted);font-size:.78rem;margin-top:4px">Changes pitch without changing speed. Large shifts can sound slightly processed.</div>
+        <div class="ctl"><div class="row"><label for="pitch">Pitch</label><output id="pitchOut" for="pitch">0.0 st</output></div><input autocomplete="off" type="range" id="pitch" min="-12" max="12" step="0.1" value="0"></div>
         <div class="grp" id="revSub"><h3>Reverb</h3>
           <div class="ctl"><div class="row"><label for="mix">Mix</label><output id="mixOut" for="mix">0%</output></div><input autocomplete="off" type="range" id="mix" min="0" max="100" step="1" value="0"></div>
           <div class="dim">
@@ -356,7 +357,7 @@ a.iconbtn{text-decoration:none}
   </div>
 </main>
 
-<footer>2026 © 0yarui</footer>
+<footer><div class="made">made with <svg class="ic heart" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="love"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg> by yarui</div><div>© 2026</div></footer>
 
 <script>
 function lamejs(){function X(c){return new Int32Array(c)}function K(c){return new Float32Array(c)}function ca(c){if(1==c.length)return K(c[0]);var k=c[0];c=c.slice(1);for(var n=[],u=0;u<k;u++)n.push(ca(c));return n}function Ia(c){if(1==c.length)return X(c[0]);var k=c[0];c=c.slice(1);for(var n=[],u=0;u<k;u++)n.push(Ia(c));return n}function dc(c){if(1==c.length)return new Int16Array(c[0]);var k=c[0];c=c.slice(1);for(var n=[],u=0;u<k;u++)n.push(dc(c));return n}function Ob(c){if(1==c.length)return Array(c[0]);
