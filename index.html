@@ -107,9 +107,9 @@ h1{font-size:clamp(2.2rem,7.5vw,3.4rem);letter-spacing:-.04em;line-height:1;marg
   text-align:center;cursor:pointer;outline:none;background:transparent;transition:transform .2s;
 }
 .drop .dash{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
-.drop .dash rect{fill:none;stroke:var(--line);stroke-width:1.5;stroke-dasharray:5 9;stroke-linecap:round}
-.drop:hover .dash rect{stroke:var(--muted)}
-.drop:focus-visible .dash rect,.drop.over .dash rect{stroke:var(--accent)}
+.drop .dash .seg{fill:none;stroke:var(--line);stroke-width:1.5;stroke-linecap:round}
+.drop:hover .dash .seg{stroke:var(--muted)}
+.drop:focus-visible .dash .seg,.drop.over .dash .seg{stroke:var(--accent)}
 .drop.over{transform:scale(1.01)}
 .drop .ic{width:34px;height:34px;margin:0 auto 14px;color:var(--muted);stroke-width:1.6}
 .drop strong{display:block;font-size:1.15rem;font-weight:600;margin-bottom:6px}
@@ -131,7 +131,7 @@ h1{font-size:clamp(2.2rem,7.5vw,3.4rem);letter-spacing:-.04em;line-height:1;marg
 .ic.spin{animation:spin .9s linear infinite}
 .drop[data-state="busy"]{cursor:progress}
 .drop[data-state="busy"].over{transform:none}
-.drop[data-state="busy"] .dash rect{stroke:var(--line);opacity:.5}
+.drop[data-state="busy"] .dash .seg{stroke:var(--line);opacity:.5}
 
 .card{
   border:1px solid var(--line);border-radius:14px;background:transparent;padding:clamp(18px,4vw,28px);
@@ -286,7 +286,7 @@ a.iconbtn{text-decoration:none}
     <div id="stage" class="stage">
     <div id="dropPanel" class="panel">
     <div id="drop" class="drop" role="button" tabindex="0" aria-label="Choose an audio file" data-state="idle">
-      <svg class="dash" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="12" ry="12"/></svg>
+      <svg class="dash" aria-hidden="true"></svg>
       <div class="state" id="stIdle">
         <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12" />
   <path d="m17 8-5-5-5 5" />
@@ -35891,6 +35891,38 @@ function prepReveal(nodes) {
     n.append(plain, fx);
   }
 }
+/* The dashed outline is drawn by hand so all four corners look identical and the dashes close perfectly:
+   each straight side gets a whole number of dashes fitted to its length, and each corner is one short curved stroke. */
+const dashSvg = el.drop.querySelector('.dash');
+function fitDash() {
+  const w = el.drop.clientWidth, h = el.drop.clientHeight, r = 12, gap = 9, edge = 5.3, NS = 'http://www.w3.org/2000/svg';
+  if (!w || !h || !dashSvg) return;
+  const seg = (tag, attrs, dash) => {
+    const e = document.createElementNS(NS, tag);
+    e.setAttribute('class', 'seg');
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    e.style.strokeDasharray = dash || 'none';
+    return e;
+  };
+  const side = (len) => {
+    const n = Math.max(1, Math.round((len + gap) / 14)), d = (len - (n - 1) * gap) / n;
+    return d.toFixed(3) + ' ' + gap;
+  };
+  const f = [];
+  const x0 = r + edge, x1 = w - r - edge, y0 = r + edge, y1 = h - r - edge;
+  if (x1 > x0) { const d = side(x1 - x0); f.push(seg('line', { x1: x0, y1: 0, x2: x1, y2: 0 }, d), seg('line', { x1: x0, y1: h, x2: x1, y2: h }, d)); }
+  if (y1 > y0) { const d = side(y1 - y0); f.push(seg('line', { x1: 0, y1: y0, x2: 0, y2: y1 }, d), seg('line', { x1: w, y1: y0, x2: w, y2: y1 }, d)); }
+  const t0 = 0.25, t1 = Math.PI / 2 - 0.25;
+  const ax = t => r - r * Math.cos(t), ay = t => r - r * Math.sin(t);
+  for (const [mx, my] of [[0, 0], [1, 0], [0, 1], [1, 1]]) {
+    const X = v => mx ? w - v : v, Y = v => my ? h - v : v;
+    const sweep = mx === my ? 1 : 0;
+    f.push(seg('path', { d: 'M ' + X(ax(t0)).toFixed(2) + ' ' + Y(ay(t0)).toFixed(2) + ' A ' + r + ' ' + r + ' 0 0 ' + sweep + ' ' + X(ax(t1)).toFixed(2) + ' ' + Y(ay(t1)).toFixed(2) }));
+  }
+  dashSvg.replaceChildren(...f);
+}
+if (window.ResizeObserver) new ResizeObserver(fitDash).observe(el.drop);
+fitDash();
 prepReveal([...el.about.querySelectorAll('p')]);
 prepReveal([document.querySelector('h1'), document.querySelector('.sub')]);
 function reveal(view) {
